@@ -1,0 +1,8 @@
+name = Islandora Usage Reports
+version = 7.x-dev
+core = 7.x
+description = Islandora Usage Stats reporting module
+dependencies[] = islandora
+dependencies[] = islandora_usage_stats
+dependencies[] = islandora_usage_stats_callbacks
+package = Islandora Tools
