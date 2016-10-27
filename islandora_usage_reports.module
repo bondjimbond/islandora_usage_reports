@@ -7,7 +7,7 @@
 /**
  * Implements hook_menu().
  */
-function islandora_usage_reports_menu() {
+ function islandora_usage_reports_menu() {
   return array(
     'admin/islandora/tools/usage_reports' => array(
       'title' => 'Islandora Usage Stats Reports',
@@ -19,7 +19,7 @@ function islandora_usage_reports_menu() {
       'file' => 'includes/admin.form.inc',
     ),
   );
-}
+} 
 
 /**
  * Implements hook_block_info(). Creates blocks.
@@ -28,11 +28,10 @@ function islandora_usage_reports_menu() {
 
 function islandora_usage_reports_block_info() {
   return array(
-    'islandora_usage_reports_thisobject' => array(
+    'usage_reports_thisobject' => array(
       'visibility' => BLOCK_VISIBILITY_LISTED,
       'pages' => 'islandora/object/*',
-      'cache' => DRUPAL_CACHE_PER_PAGE,
-      'info' => t('Usage block for each object'),
+      'info' => t('Object usage'),
     ),
   );
 }
@@ -40,34 +39,25 @@ function islandora_usage_reports_block_info() {
 /**
  * Implements hook_block_view().
  */
- 
+
 function islandora_usage_reports_block_view($delta) {
   $to_render = array();
 
-// This bit is pasted from FLVC theme template.
+  $object = menu_get_object('islandora_object', 2);
+  global $base_url;
 
-  if (module_exists('islandora_usage_stats_callbacks') && !$variables['embargoed']) {
-    $usage_data = get_usage_stats($islandora_object);
-    $variables['usage_views'] = $usage_data['views'];
-    $variables['usage_downloads'] = $usage_data['downloads'];
-  }
-  
-  $object_views = $variables['usage_views'];
-  $object_downloads = $variables['usage_downloads'];
+// Calls on the islandora_usage_stats_callbacks module 'API' to grab stats.
+  $usage_stats_json = file_get_contents("{$base_url}/islandora_usage_stats_callbacks/object_stats/{$object->id}");
 
-/*
-  function get_usage_stats($islandora_object) {
-    global $base_url;
-    $usage_stats_json = file_get_contents("{$base_url}/islandora_usage_stats_callbacks/object_stats/{$islandora_object->id}");
-    $usage_stats_array = json_decode($usage_stats_json, TRUE);
-    $views = count($usage_stats_array['views']) + $usage_stats_array['legacy-views'];
-    $downloads = count($usage_stats_array['downloads']) + $usage_stats_array['legacy-downloads'];
-    $usage_data = array('views' => $views, 'downloads' => $downloads);
-    return $usage_data; 
-  }
-*/
+// Turns the JSON output into a usable array.
+  $usage_stats_array = json_decode($usage_stats_json, TRUE);
 
-  $to_render['content'] = '<div id="object_views">Views: ' . $object_views . '</div><div id="object_downloads">Downloads: ' . $object_downloads . '</div>';
+// Counts the number of views and number of downloads. Would be nice to get rid of legacy views..
+  $views = count($usage_stats_array['views']) + $usage_stats_array['legacy-views'];
+  $downloads = count($usage_stats_array['downloads']) + $usage_stats_array['legacy-downloads'];
+
+  $to_render['content'] = '<div id="object_views">Views: ' . $views . '</div><div id="object_downloads">Downloads: ' . $downloads . '</div>';
 
   return $to_render;
 }
+
