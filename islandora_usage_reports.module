@@ -63,7 +63,21 @@ function islandora_usage_reports_block_view($delta) {
   $views = count($usage_stats_array['views']) + $usage_stats_array['legacy-views'];
   $downloads = count($usage_stats_array['downloads']) + $usage_stats_array['legacy-downloads'];
 
-  $to_render['content'] = '<div id="object_views">Views: ' . $views . '</div><div id="object_downloads">Downloads: ' . $downloads . '</div>';
+// Don't display a count if views or downloads are zero.  
+  if ($views > 0) {
+    $views = '<div id="object_views">Views: ' . $views . '</div>';
+  }
+  elseif ($views == 0) {
+    $views = "";
+  }
+  if ($downloads > 0) {
+    $downloads = '<div id="object_downloads">Downloads: ' . $downloads . '</div>';
+  }
+  elseif ($downloads == 0) {
+    $downloads = "";
+  }
+
+  $to_render['content'] = $views . $downloads;
 
   return $to_render;
 }
