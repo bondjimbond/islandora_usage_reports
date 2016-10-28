@@ -44,6 +44,13 @@ function islandora_usage_reports_block_view($delta) {
   $to_render = array();
 
   $object = menu_get_object('islandora_object', 2);
+
+// Exclude the Collection CModel from displaying the block
+  if (in_array("islandora:collectionCModel", $object->models)) {
+    return;
+  }
+
+
   global $base_url;
 
 // Calls on the islandora_usage_stats_callbacks module 'API' to grab stats.
