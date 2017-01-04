@@ -49,7 +49,10 @@ function islandora_usage_reports_block_view($delta) {
   if (in_array("islandora:collectionCModel", $object->models)) {
     return;
   }
-
+// Exclude the Person CModel - maybe fix this when Usage Stats Reports Callbacks is fixed?
+  if (in_array("islandora:personCModel", $object->models)) {
+    return;
+  }
 
   global $base_url;
 
@@ -67,13 +70,13 @@ function islandora_usage_reports_block_view($delta) {
   if ($views > 0) {
     $views = '<div id="object_views">Views: ' . $views . '</div>';
   }
-  elseif ($views == 0) {
+  else if ($views == 0) {
     $views = "";
   }
   if ($downloads > 0) {
     $downloads = '<div id="object_downloads">Downloads: ' . $downloads . '</div>';
   }
-  elseif ($downloads == 0) {
+  else if ($downloads == 0) {
     $downloads = "";
   }
 
